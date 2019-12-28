@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.QueryParam;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,8 +29,8 @@ public class UserController {
     @RequestMapping(
             method = RequestMethod.GET
     )
-    public List<User> fetchUsers() {
-        return userService.getAllUsers();
+    public List<User> fetchUsers(@QueryParam("gender") String gender) {
+        return userService.getAllUsers(Optional.ofNullable(gender));
     }
 
     @RequestMapping(

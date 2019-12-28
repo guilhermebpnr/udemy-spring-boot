@@ -8,12 +8,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -21,28 +18,57 @@ class UserServiceTest {
 
     @Mock
     FakeDataDao fakeDataDao;
+
     private UserService userService;
+
+    private String[] maleNames = {"John", "Paul", "George", "Patrick", "Mark",
+            "Robert", "Walt", "Richard", "Charles", "William"};
+
+    private String[] femaleNames = {"Julia", "Agata", "Ema", "Elle", "Mary",
+            "Adel", "Lucy", "Amanda", "Barbara", "Joan"};
+
+    private String[] lastNames = {"Thompson", "Greenford", "Watson", "Mueller", "Ford",
+            "Carvalho", "Wood", "Hoffmann", "Peterson", "Franken"};
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
         userService = new UserService(fakeDataDao);
+
     }
 
     @Test
     void shouldGetAllUsers() {
-        List<User> mockedUsersList = getMockedUsersList();
+        List<User> mockedUsersList = new ArrayList<>();
+        mockedUsersList.add(getRandomUser());
         given(fakeDataDao.selectAllUsers()).willReturn(mockedUsersList);
-        List<User> allUsers = userService.getAllUsers();
+        List<User> allUsers = userService.getAllUsers(Optional.empty());
         assertThat(allUsers.size()).isEqualTo(1);
         assertThat(allUsers.get(0)).isEqualToComparingFieldByField(mockedUsersList.get(0));
     }
 
-    private List<User> getMockedUsersList() {
-        User user = getRandomUser();
+    @Test
+    void shouldGetAllUsersByGender() {
         List<User> mockedUsersList = new ArrayList<>();
-        mockedUsersList.add(user);
-        return mockedUsersList;
+        mockedUsersList.add(getGenderedUser(User.Gender.MALE));
+        mockedUsersList.add(getGenderedUser(User.Gender.MALE));
+        mockedUsersList.add(getGenderedUser(User.Gender.MALE));
+        mockedUsersList.add(getGenderedUser(User.Gender.FEMALE));
+        mockedUsersList.add(getGenderedUser(User.Gender.FEMALE));
+        given(fakeDataDao.selectAllUsers()).willReturn(mockedUsersList);
+
+        List<User> maleUsers = userService.getAllUsers(Optional.of("MALE"));
+        List<User> femaleUsers = userService.getAllUsers(Optional.of("female"));
+
+        assertThat(maleUsers.size()).isEqualTo(3);
+        assertThat(femaleUsers.size()).isEqualTo(2);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenGenderInvalid() {
+        assertThatThrownBy(() -> userService.getAllUsers(Optional.of("XXXX")))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Invalid gender.");
     }
 
     @Test
@@ -88,6 +114,25 @@ class UserServiceTest {
         User mockedUser = getRandomUser();
         given(fakeDataDao.selectUserById(mockedUser.getUserUid())).willReturn(Optional.of(mockedUser));
         assertThat(userService.insertUser(mockedUser)).isEqualTo(-1);
+    }
+
+    private User getGenderedUser(User.Gender gender) {
+        String name;
+        if (gender == User.Gender.MALE) {
+            name = maleNames[new Random().nextInt(10)];
+        } else {
+            name = femaleNames[new Random().nextInt(10)];
+        }
+        String lastName = lastNames[new Random().nextInt(10)];
+        String email = (name + "." + lastName + "@email.com").toLowerCase();
+        return new User(
+                UUID.randomUUID(),
+                name,
+                lastName,
+                gender,
+                new Random().nextInt(100) + 18,
+                email
+        );
     }
 
     private User getRandomUser() {
