@@ -53,6 +53,14 @@ public class User {
         return email;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public int getYearOfBirth() {
+        return LocalDate.now().minusYears(age).getYear();
+    }
+
     public static User newUser(User user) {
         return new User(
                 UUID.randomUUID(), user.getFirstName(), user.getLastName(),
