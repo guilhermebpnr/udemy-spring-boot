@@ -27,7 +27,8 @@ public class UserController {
     }
 
     @RequestMapping(
-            method = RequestMethod.GET
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<User> fetchUsers(@QueryParam("gender") String gender) {
         return userService.getAllUsers(Optional.ofNullable(gender));
@@ -35,6 +36,7 @@ public class UserController {
 
     @RequestMapping(
             method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE,
             path = "{userUid}"
     )
     public ResponseEntity<?> fetchUser(@PathVariable("userUid") UUID userUid) {
@@ -48,7 +50,8 @@ public class UserController {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Integer> insertUser(@RequestBody User user) {
         int result = userService.insertUser(user);
@@ -60,7 +63,8 @@ public class UserController {
 
     @RequestMapping(
             method = RequestMethod.PUT,
-            consumes = MediaType.APPLICATION_JSON_VALUE
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Integer> updateUser(@RequestBody User user) {
         int result = userService.updateUser(user);
@@ -72,6 +76,7 @@ public class UserController {
 
     @RequestMapping(
             method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE,
             path = "{userUid}"
     )
     public ResponseEntity<Integer> removeUser(@PathVariable("userUid") UUID userUid) {
