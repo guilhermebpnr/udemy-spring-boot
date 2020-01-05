@@ -1,6 +1,5 @@
 package dev.guilhermebpnr.springbootlearning.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
@@ -34,12 +33,10 @@ public class User {
         return userUid;
     }
 
-    @JsonIgnore
     public String getFirstName() {
         return firstName;
     }
 
-    @JsonIgnore
     public String getLastName() {
         return lastName;
     }
