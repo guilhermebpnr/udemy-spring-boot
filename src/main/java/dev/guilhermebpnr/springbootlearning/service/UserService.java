@@ -59,8 +59,7 @@ public class UserService {
     public int insertUser(User user) {
         Optional<User> optionalUser = getUser(user.getUserUid());
         if (!optionalUser.isPresent()) {
-            user.setUserUid(UUID.randomUUID());
-            userDao.insertUser(user);
+            userDao.insertUser(User.newUser(user));
             return 1;
         }
         return -1;
