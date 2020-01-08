@@ -3,20 +3,17 @@ package dev.guilhermebpnr.springbootlearning.controller;
 import dev.guilhermebpnr.springbootlearning.model.User;
 import dev.guilhermebpnr.springbootlearning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
 
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RestController
-@RequestMapping(
-        path = "/api/v1/users"
-)
+@Component
+@Path("/api/v1/users")
 public class UserController {
 
     UserService userService;
@@ -26,65 +23,57 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public List<User> fetchUsers(@QueryParam("gender") String gender) {
         return userService.getAllUsers(Optional.ofNullable(gender));
     }
 
-    @RequestMapping(
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            path = "{userUid}"
-    )
-    public ResponseEntity<?> fetchUser(@PathVariable("userUid") UUID userUid) {
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{userUid}")
+    public Response fetchUser(@PathParam("userUid") UUID userUid) {
         Optional<User> userOptional = userService.getUser(userUid);
         if (userOptional.isPresent()) {
-            return ResponseEntity.ok(userOptional.get());
+            return Response.ok(userOptional.get()).build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Error("The user could not be found."));
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(new Error("User could not be found."))
+                    .build();
         }
     }
 
-    @RequestMapping(
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<Integer> insertUser(@RequestBody User user) {
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response insertUser(User user) {
         int result = userService.insertUser(user);
         if (result == 1) {
-            return ResponseEntity.ok().build();
+            return Response.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @RequestMapping(
-            method = RequestMethod.PUT,
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<Integer> updateUser(@RequestBody User user) {
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(User user) {
         int result = userService.updateUser(user);
         if (result == 1) {
-            return ResponseEntity.ok().build();
+            return Response.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @RequestMapping(
-            method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE,
-            path = "{userUid}"
-    )
-    public ResponseEntity<Integer> removeUser(@PathVariable("userUid") UUID userUid) {
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{userUid}")
+    public Response removeUser(@PathParam("userUid") UUID userUid) {
         int result = userService.removeUser(userUid);
         if (result == 1) {
-            return ResponseEntity.ok().build();
+            return Response.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     class Error {
