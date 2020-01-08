@@ -13,13 +13,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-@Path("api/v1/users")
-public class UserControllerRestEasy {
+@Path("/api/v1/users")
+public class UserControllerJersey {
 
     UserService userService;
 
     @Autowired
-    public UserControllerRestEasy(UserService userService) {
+    public UserControllerJersey(UserService userService) {
         this.userService = userService;
     }
 
