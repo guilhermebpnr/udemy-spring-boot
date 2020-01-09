@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserResourceV1 {
+public interface UserControllerV1 {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     List<User> fetchUsers(@QueryParam("gender") String gender);

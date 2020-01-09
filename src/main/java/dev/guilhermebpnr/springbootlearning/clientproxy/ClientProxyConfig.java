@@ -14,10 +14,10 @@ public class ClientProxyConfig {
     private String usersEndpointUrl;
 
     @Bean
-    public UserResourceV1 getUserResourceV1() {
+    public UserControllerV1 getUserResourceV1() {
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget  target = client.target(usersEndpointUrl);
-        UserResourceV1 proxy = target.proxy(UserResourceV1.class);
+        UserControllerV1 proxy = target.proxy(UserControllerV1.class);
         return proxy;
     }
 }
