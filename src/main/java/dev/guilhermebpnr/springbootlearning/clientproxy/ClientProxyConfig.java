@@ -15,7 +15,9 @@ public class ClientProxyConfig {
 
     @Bean
     public UserControllerV1 getUserResourceV1() {
-        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyClientBuilder resteasyClientBuilder = new ResteasyClientBuilder();
+        resteasyClientBuilder.connectionPoolSize(20);
+        ResteasyClient client = resteasyClientBuilder.build();
         ResteasyWebTarget  target = client.target(usersEndpointUrl);
         UserControllerV1 proxy = target.proxy(UserControllerV1.class);
         return proxy;

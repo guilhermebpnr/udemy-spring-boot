@@ -1,10 +1,12 @@
 package dev.guilhermebpnr.springbootlearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     private final UUID userUid;
@@ -63,7 +65,8 @@ public class User {
 
     public static User newUser(User user) {
         return new User(
-                UUID.randomUUID(), user.getFirstName(), user.getLastName(),
+                user.getUserUid() == null ? UUID.randomUUID() : user.getUserUid(),
+                user.getFirstName(), user.getLastName(),
                 user.getGender(), user.getAge(), user.getEmail());
     }
 
