@@ -4,7 +4,9 @@ import dev.guilhermebpnr.springbootlearning.model.User;
 import dev.guilhermebpnr.springbootlearning.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Validated
 @Path("/api/v1/users")
 public class UserController {
 
@@ -46,7 +49,7 @@ public class UserController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insertUser(User user) {
+    public Response insertUser(@Valid User user) {
         int result = userService.insertUser(user);
         if (result == 1) {
             return Response.ok().build();
