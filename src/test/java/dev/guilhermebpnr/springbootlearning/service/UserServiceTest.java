@@ -106,6 +106,7 @@ class UserServiceTest {
     void shouldInsertUser() {
         User mockedUser = getRandomUser();
         given(fakeDataDao.insertUser(mockedUser)).willReturn(1);
+        int i = fakeDataDao.insertUser(mockedUser);
         assertThat(userService.insertUser(mockedUser)).isEqualTo(1);
     }
 
@@ -113,7 +114,8 @@ class UserServiceTest {
     void shouldNotInsertUserWhenUserAlreadyExists() {
         User mockedUser = getRandomUser();
         given(fakeDataDao.selectUserById(mockedUser.getUserUid())).willReturn(Optional.of(mockedUser));
-        assertThat(userService.insertUser(mockedUser)).isEqualTo(-1);
+        assertThatThrownBy(() -> userService.insertUser(mockedUser))
+                .isInstanceOf(RuntimeException.class);
     }
 
     private User getGenderedUser(User.Gender gender) {

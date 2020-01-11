@@ -1,10 +1,12 @@
 package dev.guilhermebpnr.springbootlearning.service;
 
+import dev.guilhermebpnr.springbootlearning.dao.FakeDataDao;
 import dev.guilhermebpnr.springbootlearning.dao.UserDao;
 import dev.guilhermebpnr.springbootlearning.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private UserDao userDao;
+    private FakeDataDao fakeDataDao;
 
     @Autowired
     public UserService(UserDao userDao) {
@@ -41,27 +44,32 @@ public class UserService {
     public int updateUser(User user) {
         Optional<User> optionalUser = getUser(user.getUserUid());
         if (optionalUser.isPresent()) {
-            userDao.updateUser(user);
-            return 1;
+            return userDao.updateUser(user);
         }
-        return -1;
+        throw new NotFoundException("user " + user.getUserUid() + " not found");
     }
 
     public int removeUser(UUID userUid) {
         Optional<User> optionalUser = getUser(userUid);
         if (optionalUser.isPresent()) {
-            userDao.deleteUserById(userUid);
-            return 1;
+            return userDao.deleteUserById(userUid);
         }
-        return -1;
+        throw new NotFoundException("user " + userUid + " not found");
     }
 
     public int insertUser(User user) {
         Optional<User> optionalUser = getUser(user.getUserUid());
         if (!optionalUser.isPresent()) {
-            userDao.insertUser(User.newUser(user));
-            return 1;
+            User newUser = new User (
+                user.getUserUid() == null ? UUID.randomUUID() : user.getUserUid(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getGender(),
+                user.getAge(),
+                user.getEmail()
+            );
+            return userDao.insertUser(user);
         }
-        return -1;
+        throw new RuntimeException("user + " + user.getUserUid() + " already exists");
     }
 }

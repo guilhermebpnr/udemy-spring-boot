@@ -75,13 +75,6 @@ public class User {
         return LocalDate.now().minusYears(age).getYear();
     }
 
-    public static User newUser(User user) {
-        return new User(
-                user.getUserUid() == null ? UUID.randomUUID() : user.getUserUid(),
-                user.getFirstName(), user.getLastName(),
-                user.getGender(), user.getAge(), user.getEmail());
-    }
-
     @Override
     public String toString() {
         return "User{" +
