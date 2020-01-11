@@ -16,20 +16,20 @@ public interface UserControllerV1 {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{userUid}")
-    Response fetchUser(@PathParam("userUid") UUID userUid);
+    User fetchUser(@PathParam("userUid") UUID userUid);
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    Response insertUser(User user);
+    void insertUser(User user);
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    Response updateUser(User user);
+    void updateUser(User user);
 
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{userUid}")
-    Response removeUser(@PathParam("userUid") UUID userUid);
+    void removeUser(@PathParam("userUid") UUID userUid);
 }
