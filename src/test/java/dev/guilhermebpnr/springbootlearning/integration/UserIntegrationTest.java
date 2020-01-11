@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -32,7 +34,7 @@ class UserIntegrationTest {
 				"sponge.bob@bikinibottom.com"
 		);
 		userControllerV1.insertUser(expectedUser);
-		User actualUser = userControllerV1.fetchUser(userUid).readEntity(User.class);
+		User actualUser = userControllerV1.fetchUser(userUid);
 		assertThat(actualUser).isEqualToComparingFieldByField(expectedUser);
 	}
 
@@ -49,12 +51,12 @@ class UserIntegrationTest {
 		);
 
 		userControllerV1.insertUser(expectedUser);
-		User actualUser = userControllerV1.fetchUser(userUid).readEntity(User.class);
+		User actualUser = userControllerV1.fetchUser(userUid);
 		assertThat(actualUser).isEqualToComparingFieldByField(expectedUser);
 
 		userControllerV1.removeUser(userUid);
-		actualUser = userControllerV1.fetchUser(userUid).readEntity(User.class);
-		assertThat(actualUser.getUserUid()).isNull();
+		assertThatThrownBy(() -> userControllerV1.fetchUser(userUid))
+				.isInstanceOf(NotFoundException.class);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ class UserIntegrationTest {
 		);
 
 		userControllerV1.insertUser(newUser);
-		User actualUser = userControllerV1.fetchUser(userUid).readEntity(User.class);
+		User actualUser = userControllerV1.fetchUser(userUid);
 		assertThat(actualUser).isEqualToComparingFieldByField(newUser);
 
 		User updatedUser = new User(
@@ -83,7 +85,7 @@ class UserIntegrationTest {
 		);
 
 		userControllerV1.updateUser(updatedUser);
-		actualUser = userControllerV1.fetchUser(userUid).readEntity(User.class);
+		actualUser = userControllerV1.fetchUser(userUid);
 		assertThat(actualUser).isEqualToComparingFieldByField(updatedUser);
 	}
 
